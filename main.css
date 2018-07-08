@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+body {
+    text-align: center;
+    margin-top: 100px;
+    background-color: hsl(29, 100%, 97%);
+}
+
+h3, h4, p {
+    /* font-family: 'Open Sans', sans-serif; */
+    font-family: 'helvetica neue', sans-serif;
+}
+
+@media only screen and (min-width: 768px) {
+    /* For mobile phones: */
+    .quiz {
+        width: 768px;
+        margin: auto;
+    }
+}
+
+.quiz {
+    box-shadow: 0 0.3125rem 1rem 0 rgba(0,0,0,0.24);
+}
+/*          Header          */
+.nav {
+    height: 40px;
+    width: 100%;
+    background-color: #003366;
+    padding-bottom: 20px;
+}
+
+div.nav h3.title {
+    float: left;
+    margin-left: 10px;
+}
+
+div.nav h3.score {
+    float: right;
+    line-height: 25px;
+    margin-right: 10px;
+}
+
+div.nav h3.title, div.nav h3.score {
+    color: white;
+    padding: 0px 10px 10px 10px;
+}
+
+/*      End of Header       */
+
+
+/*      State1          */
+/* button {
+    display: flex;
+    text-align: center;
+    flex-wrap: wrap;
+} */
+
+/* button > div { */
+    /* flex: 1 1 40%; */
+    /* box-sizing: border-box; */
+    /* align-items: center;
+} */
+
+/* button {
+    font-size: 20px;
+    font-weight: 800px;
+} */
+
+/* #A {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+#B {
+    margin-right: 10px;
+    margin-left: 5px;
+} */
+
+/* #quizA {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+#quizB {
+    margin-right: 10px;
+    margin-left: 5px;
+} */
+
+/* #quizA:hover, #quizB:hover {
+    box-shadow: 0 0.3125rem 1rem 0 rgba(0,0,0,0.24);
+} */
+
+/* experimental */
+.button-choose {
+    /* margin-top: 100px; */
+    padding: 20px 40px;
+    border: none;
+    font-size: 30px;
+    /* font-weight: 800px; */
+}
+
+#A {
+    margin-right: 20px;
+}
+
+#B {
+    margin-left: 20px;
+}
+.button-choose:hover {
+    box-shadow: 0 0.3125rem 1rem 0 rgba(0,0,0,0.24);
+}
+/* end experimental */
+
+/* .choose {
+    background-color: white;
+} */
+/*      end of state1   */
+
+
+
+/*      Main content, contents general */
+.main-content {
+    display: flex;
+}
+
+.main-content > * {
+    border: solid 2px red;
+    display: flex;
+}
+
+.content {
+    background-color:rgb(44, 163, 236);
+    padding-top: 10px;
+    height: 300px;
+}
+
+/*      end of main content, general */
+
+
+/* answer-section styling */
+.answer-section {
+    display: flex;
+    text-align: center;
+    flex-wrap: wrap;
+    padding: 10px 40px 40px 40px;
+    /* animation-name: down;
+    animation-duration: 3s; */
+}
+
+.answer-section > div {
+    flex: 5 5 50%;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+
+.answer {
+    height: 75px;
+    width: 50px;
+    /* height: 50px;
+    width: 50px; */
+    color: white;
+    background-color: #004080;
+    border-radius: 4px;
+    border: solid 1px white;
+    box-shadow: 0 3px 3px white;
+    align-items: center;
+}
+
+.answer h4 {
+    margin-top: 30px;
+}
+
+.answer:hover {
+    animation-name: pop;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes pop {
+    100% {
+        background-color: #0066cc;
+        transform-box: 10%;
+    }
+}
+
+@keyframes down {
+    0% {
+        top: 0px;
+    }
+    100% {
+        top: 100px;
+    }
+}
+
+
+/* .answer:hover {
+    border: solid 4px black;
+} */
+
+.state_1 h4 {
+    margin-top: 75px;
+    font-weight: 800;
+    font-size: 40px;
+    padding-bottom: 0px;
+    color: white;
+}
