@@ -1,6 +1,7 @@
+// jsonData - local, can be accessed on src/json if needed.
 const jsonData = {"quizzes":[{"title":"Abstract Quiz","questions":[{"question":"If two left handed people argue, which one is right?","answers":[{"content":"The one on the right.","value":false},{"content":"The one on the left.","value":true},{"content":"The one with the gun.","value":false},{"content":"Tom.","value":false}]},{"question":"What does Google use if it can't find an answer on Google?","answers":[{"content":"Bing","value":false},{"content":"Bang","value":false},{"content":"Bong","value":false},{"content":"Ask Jeeves","value":true}]},{"question":"What kind of pants do Mario and Luigi wear?","answers":[{"content":"Dussault apparel slashed jeans","value":false},{"content":"Tapered bell bottoms","value":false},{"content":"Acid washed Guccis","value":false},{"content":"Denim denim denim","value":true}]}]},{"title":"Dev Quiz","questions":[{"question":"How many programmers does it take to change a lightbulb?","answers":[{"content":"x = x + 1","value":false},{"content":"undefined","value":false},{"content":"NaN === NaN","value":false},{"content":"None. It's a hardware problem.","value":true}]},{"question":"What's the object oriented way to become wealthy?","answers":[{"content":"Inheritance","value":true},{"content":"Have some class","value":false},{"content":"Super props","value":false},{"content":"Wealth is subjective","value":false}]},{"question":"What should you do when a bug is sad?","answers":[{"content":"Help it out of a bind","value":false},{"content":"Console it","value":true},{"content":"Express your feelings","value":false},{"content":"Be more responsive","value":false}]}]}]};
 
-// control UI, and contains dynamic HTML
+// control UI, and contains dynamic HTML - takes in data from Data class
 class AppUI {
     constructor(data) {
         // data = object { type, questions&answers, score }
@@ -17,12 +18,10 @@ class AppUI {
     // initial build
     start() {
         let html = `
-        <div class="state_1">
-            <h4>
-                Quiz App
-            </h4>
+        <div class="start-content">
+            <h4> Quiz App </h4>
 
-            <div class="quiz-type">
+            <div class="quiz-type"> 
                 <button class="button-choose" id="A">Quiz A</button>
                 <button class="button-choose" id="B">Quiz B</button>
             </div>
@@ -33,30 +32,26 @@ class AppUI {
         root.innerHTML = html;
     }
 
-    // questions : answers state
+    // questions and answers section
     main() {
         // generate html with question answers 
         function renderAnswers(answers) {
-            console.log('renderanswers answers', answers);
-            const content = answers.map(answer => { 
+            const content = answers.map((answer, index) => { 
                 return (`
-                    <div value="${answer.value}" class="answer">
-                        <h4 value="${answer.value}" id='answer_#' class="answer-content">${answer.content}</h4>
+                    <div value="${answer.value}" class="answer" data-key='${index}'>
+                        <h4 value="${answer.value}" data-key='${index}' class="answer-content">${answer.content}</h4>
                     </div>`);
             }).join('');
             return content;
         }
-        console.log('this.question', this.question);
         let { question, answers } = this.question;
-        console.log('answers', answers);
-        console.log('question', question);
         let content = renderAnswers(answers);
 
-        let html =                     `
-        '   <div id='main-content' class="main-content" style="display: inline;">
+        let html = 
+        `
+            <div id='main-content' class="main-content" style="display: inline;">
                 <div class="question-section" id="question-section">
                     <h4 id="question">${question}</h4>
-
                 </div>
 
                 <div class="answer-section" id="answer-section">
@@ -69,92 +64,90 @@ class AppUI {
     }
 
     // end state - pass/fail
-    end(score) {
+    end(overall) {
+        let { score, total } = overall;
         let html = 
         `
         <div class="end">
-            <h4>Pass/Fail</h4>
-            <p>Score: </p>
+            <h4>${(score / total > 0.50 ) ? `Pass!` : `Fail`}</h4>
+            <p>Score: ${score} / ${total}</p>
         </div>
         `;
 
         root.innerHTML = html;
     }
 
-    // determine which state to run (start, main, end)
-    // update(command) {
-    //     console.log('app control')
-    //     switch(command) {
-    //         default:
-    //             console.log('start');
-    //             document.getElementById('root').innerHTML = this.start();
-    //     }
-    // }
+    // update the header, which displays current score
+    header(overall) {
+        let score = `${overall.score} / ${overall.total}`;
+        let html = `<div class="nav">
+                        <h3 class="title">${this.type}</h3>
+                        <h3 class="score">${score}</h3>
+                    </div>`;
+        document.getElementById('nav').innerHTML = html;
+    }
 
-    // contains quiz type, and updated score
-    header() {
-        return `<div class="nav">
-                    <h3 class="title">${this.type}</h3>
-                    <h3 class="score">${this.score}</h3>
-                </div>`;
+    // common sequence method declarations
+    updateUI(state, progress, answerValue = undefined, node = undefined) {
+        // change background color of answer selection button
+        if (node !== undefined) {
+            let styleQuery = document.querySelector(`[data-key='${node}']`).style;
+            if (answerValue === 'true') {
+                styleQuery.backgroundColor = 'hsl(140, 100%, 30%)'; // red
+                styleQuery.color = 'white';
+            } else {
+                styleQuery.backgroundColor = 'hsl(0, 100%, 55%)'; // green
+                styleQuery.color = 'white';
+            }
+        }
+        // this.validateUI(node);
+        setTimeout(() => {
+            this.header(progress);
+            if (state === 'end') {
+                this.end(progress);
+            } else {
+                this.main();
+            }
+        }, (answerValue === undefined) ? 100 : 2000)
     }
 
     // set data maintained from outside source, and update the UI
     set data(data) {
+        // prevent error message - setters invoked in initialization of class
         if (data == null) { return }
-        //console.log('APPUI set Data', data);
+        
+        // destructuring of data sent from Data class. reassign to Class scope
         let { title, question } = data;
-        console.log('title', title);
-        console.log('question', question);
         this.type = title;
         this.question = question;
-        console.log('this.type',this.type);
+
     }
 }
 
 // user object containing basic info, and answers
 const User = {
-    // check if answer is 'true'
-    update: (truthy) => {
-        User.total++;
-        if (truthy) {
+    // check if user selected answer is 'true' 
+    update: function(nodeValue) { // function declaration to be able to access 'this'
+        this.total++;
+        if (nodeValue === 'true') {
             User.score++;
         }
-
-        return {
-            score: User.score,
-            total: User.total
+        this.overall = {
+            score: this.score,
+            total: this.total
         }
+
+        return this.overall;
     },
     score: 0,
     total: 0,
-    answers: []
+    overall: {
+        score: 0,
+        total: 0
+    }
 }
 
-// decide which data to send to AppUI
-// const data = {
-//     questions: [],
-//     title: '',
-//     index: 0,
-//     initializeVariables: function(choice) {
-
-//     },
-//     current: () => {
-//         console.log('this', this)
-//         // let question = this.questions[this.index];
-//         // let title = this.title;
-        
-//         // let obj = {
-//         //     title,
-//         //     question
-//         // }
-
-//         // this.index++;
-
-//         // return obj;
-//     }
-// }
-
+// initialization of json Data, and determines current progress
 class Data {
     constructor(data) {
         this.data = data;
@@ -170,22 +163,16 @@ class Data {
             [ quiz ] = list 
             : [ , quiz ] = list;
         const { title, questions } = quiz;
-        console.log('title, questions', title, questions)
         
         this.questions = questions;
         this.title = title;
-
-        // this.current();
     }
 
     current() {
-        console.log('data.current invoked, this.index:', this.index);
         if (this.questions.length === this.index) {
-            console.log('data.current if statement entered')
             return false; 
         }
         let question = this.questions[this.index];
-        // console.log('question length', this.questions.length);
         let title = this.title;
 
         let obj = {
@@ -198,47 +185,46 @@ class Data {
     }
 }
 
-// event listeners to control user input
-
+// start of app, and a series of event listeners for general purpose
 const listen = (function() {
     const root = document.getElementById('root');
-    // const nav = documnt.getElementById('header');
     const app = new AppUI();
     const data = new Data(jsonData);
 
     app.start();
 
     document.addEventListener('click', (event) => {
-        console.log(event);
         let value = event.target.classList.value;
-        let answerValue = event.target.attributes[0].nodeValue;
-        let current, totals;
+        let datakey = '';
+        let current, answerValue;
         switch(value) {
+            // user choses quiz A or B
             case('button-choose'):
+                // assign chosen Quiz type into 'current', and set data into AppUI to display
                 data.initializeVariables(event.target.id);
                 current = data.current();
-                console.log('current', current);
                 app.data = current;
-                app.main();
+                app.updateUI('main', User.overall);
                 break;
+            // user choses answer; clicks either the div element, or text
             case('answer'):
             case('answer-content'):
-                // if end of quiz ==> end quiz
+                datakey = event.target.dataset.key;
+                answerValue = event.target.attributes[0].nodeValue;
+
                 current = data.current();
-                console.log('current', current);
-                console.log('answerValue', answerValue);
+                User.update(answerValue);
+                // if end of quiz, run end sequence
                 if (!current) {
-                    console.log('end');
-                    console.log('totals end', totals);
-                    app.end();
+                    app.updateUI('end', User.overall, answerValue, datakey);
                     return;
+                } else {
+                    app.data = current;
+                    app.updateUI('main', User.overall, answerValue, datakey);
                 }
-                totals = User.update();
-                console.log('totals', totals);
-                app.data = current;
-                app.main();
                 break;
             default:
+                // prevents any non specific inputs
                 break;
         }
     })
